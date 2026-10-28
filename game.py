@@ -1,4 +1,5 @@
 
+import asyncio
 import pygame
 import sys
 
@@ -31,7 +32,6 @@ CRYSTAL_STARTS = [
     (11, 12)
 ]
 
-FLOOR_COLOR = (9, 15, 31)
 PORTAL_DARK = (35, 15, 35)
 
 font = None
@@ -73,12 +73,10 @@ class Game:
 
     def reset(self):
         self.maze = Maze()
-
         self.player = Player(PLAYER_START)
         self.enemy = Enemy(HUNTER_START)
 
         self.crystals = set(CRYSTAL_STARTS)
-
         self.game_state = "playing"
 
     # --------------------------------------------------
@@ -146,7 +144,7 @@ class Game:
         if self.game_state != "playing":
             return
 
-        # A* + Fuzzy Logic hunter update
+        # A* pathfinding + Fuzzy Logic aggression
         self.enemy.update(
             dt,
             self.maze,
@@ -163,7 +161,7 @@ class Game:
             self.game_state = "lost"
             return
 
-        # Player reaches unlocked exit
+        # Player reaches the unlocked exit
         if (
             self.player.position == EXIT_POSITION
             and not self.crystals
@@ -255,7 +253,8 @@ class Game:
 
         # Hunter aggression percentage
         aggression = max(
-            0, min(100, self.enemy.aggression)
+            0.0,
+            min(100.0, float(self.enemy.aggression))
         )
 
         aggression_text = small_font.render(
@@ -268,7 +267,7 @@ class Game:
             (205, hud_y + 62)
         )
 
-        # Aggression bar dimensions
+        # Aggression bar
         bar_x = 205
         bar_y = hud_y + 84
         bar_width = 180
@@ -295,7 +294,7 @@ class Game:
                 border_radius=5
             )
 
-        # Small neon border around the bar
+        # Neon outline
         pygame.draw.rect(
             self.screen,
             (120, 40, 65),
@@ -368,7 +367,7 @@ class Game:
         self.maze.draw(self.screen)
         self.draw_exit()
 
-        # Show the route chosen by A*
+        # Show the route selected by A*
         if len(self.enemy.path) > 1:
             points = [
                 (
@@ -387,7 +386,8 @@ class Game:
             )
 
         Player.draw_crystals(
-            self.screen, self.crystals
+            self.screen,
+            self.crystals
         )
 
         self.player.draw(self.screen)
@@ -399,31 +399,36 @@ class Game:
         pygame.display.flip()
 
     # --------------------------------------------------
-    # MAIN GAME LOOP
+    # ASYNCHRONOUS GAME LOOP FOR BROWSER SUPPORT
     # --------------------------------------------------
 
-    def run(self):
-        running = True
-
-        # Allow held keys to repeat
+    async def run(self):
         pygame.key.set_repeat(150, 110)
 
+        running = True
+
         while running:
+            # Limit the frame rate and calculate elapsed time
             dt = self.clock.tick(FPS) / 1000.0
 
             running = self.handle_events()
 
+            if not running:
+                break
+
             self.update(dt)
             self.draw()
 
+            # Give the browser time to process events and render
+            await asyncio.sleep(0)
+
         pygame.quit()
-        sys.exit()
 
 
-def main():
+# --------------------------------------------------
+# ASYNCHRONOUS ENTRY POINT
+# --------------------------------------------------
+
+async def main():
     game = Game()
-    game.run()
-
-
-if __name__ == "__main__":
-    main()
+    await game.run()
