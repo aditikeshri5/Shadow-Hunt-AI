@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow Hunt AI</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <main class="container">
+        <p class="eyebrow">ARTIFICIAL INTELLIGENCE PROJECT</p>
+        <h1>SHADOW <span>HUNT AI</span></h1>
+        <p class="subtitle">
+            Collect the crystals. Escape the maze. Outsmart the Hunter.
+        </p>
+
+        <section class="game-panel">
+            <div class="game-heading">
+                <h2>MISSION: MAZE ESCAPE</h2>
+                <span id="connection">CONNECTING...</span>
+            </div>
+
+            <div id="maze" aria-label="Game maze"></div>
+
+            <div class="stats">
+                <p>CRYSTALS: <strong id="score">0/5</strong></p>
+                <p>HUNTER AGGRESSION: <strong id="aggression">25%</strong></p>
+                <p id="status">Loading game...</p>
+            </div>
+        </section>
+
+        <p class="instructions">
+            Move: WASD or Arrow Keys · Restart: R
+        </p>
+        <button id="restart">RESTART MISSION</button>
+    </main>
+
+    <script src="/script.js"></script>
+</body>
+</html>
