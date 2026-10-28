@@ -12,13 +12,25 @@
         <p class="eyebrow">ARTIFICIAL INTELLIGENCE PROJECT</p>
         <h1>SHADOW <span>HUNT AI</span></h1>
         <p class="subtitle">
-            Collect the crystals. Escape the maze. Outsmart the Hunter.
+            Collect the crystals. Escape the maze. Outsmart the Hunters.
         </p>
 
         <section class="game-panel">
             <div class="game-heading">
                 <h2>MISSION: MAZE ESCAPE</h2>
                 <span id="connection">CONNECTING...</span>
+            </div>
+
+            <div class="difficulty-controls">
+                <span>DIFFICULTY</span>
+                <button class="difficulty-btn" data-level="easy">EASY</button>
+                <button class="difficulty-btn active" data-level="medium">MEDIUM</button>
+                <button class="difficulty-btn" data-level="hard">HARD</button>
+            </div>
+
+            <div class="game-info">
+                <span>LEVEL: <strong id="difficultyLabel">MEDIUM</strong></span>
+                <span>HUNTERS: <strong id="hunterCount">1</strong></span>
             </div>
 
             <div id="maze" aria-label="Game maze"></div>
@@ -33,7 +45,11 @@
         <p class="instructions">
             Move: WASD or Arrow Keys · Restart: R
         </p>
-        <button id="restart">RESTART MISSION</button>
+
+        <div class="action-buttons">
+            <button id="newMaze">NEW MAZE</button>
+            <button id="restart">RESTART MISSION</button>
+        </div>
     </main>
 
     <script src="/script.js"></script>

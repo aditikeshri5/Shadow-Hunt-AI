@@ -5,6 +5,10 @@ const scoreElement = document.getElementById("score");
 const aggressionElement = document.getElementById("aggression");
 const statusElement = document.getElementById("status");
 const restartButton = document.getElementById("restart");
+const newMazeButton = document.getElementById("newMaze");
+const difficultyLabel = document.getElementById("difficultyLabel");
+const hunterCountElement = document.getElementById("hunterCount");
+const difficultyButtons = document.querySelectorAll(".difficulty-btn");
 
 let gameState = null;
 let busy = false;
@@ -35,8 +39,16 @@ function drawMaze(state) {
     mazeElement.style.gridTemplateColumns =
         `repeat(${state.cols}, minmax(0, 1fr))`;
 
-    const pathPositions = new Set(
-        (state.hunter_path || []).map(p => `${p[0]},${p[1]}`)
+    const paths = state.hunter_paths || [state.hunter_path || []];
+    const hunters = state.hunters || [state.hunter];
+
+    const pathPositions = new Set();
+    paths.forEach(path => {
+        path.forEach(p => pathPositions.add(`${p[0]},${p[1]}`));
+    });
+
+    const hunterPositions = new Set(
+        hunters.map(p => `${p[0]},${p[1]}`)
     );
 
     const crystalPositions = new Set(
@@ -68,7 +80,7 @@ function drawMaze(state) {
                 cell.title = "Crystal";
             }
 
-            if (samePosition(state.hunter, [col, row])) {
+            if (hunterPositions.has(key)) {
                 cell.textContent = "☠";
                 cell.classList.add("hunter");
                 cell.title = "Hunter";
@@ -90,16 +102,30 @@ function drawMaze(state) {
     aggressionElement.textContent =
         `${Math.round(state.aggression)}%`;
 
+    const level = state.difficulty || "medium";
+    difficultyLabel.textContent = level.toUpperCase();
+    hunterCountElement.textContent =
+        state.hunter_count || hunters.length;
+
+    difficultyButtons.forEach(button => {
+        button.classList.toggle(
+            "active",
+            button.dataset.level === level
+        );
+    });
+
     if (state.game_state === "won") {
-        statusElement.textContent = "MISSION COMPLETE! You escaped!";
+        statusElement.textContent =
+            "MISSION COMPLETE! You escaped!";
     } else if (state.game_state === "lost") {
-        statusElement.textContent = "GAME OVER! The Hunter caught you!";
+        statusElement.textContent =
+            "GAME OVER! A Hunter caught you!";
     } else if (state.score < state.total_crystals) {
         statusElement.textContent =
-            `Collect all ${state.total_crystals} crystals to unlock your escape.`;
+            `Collect all ${state.total_crystals} crystals to unlock the exit.`;
     } else {
         statusElement.textContent =
-            "All crystals collected! Reach the green exit!";
+            "All crystals collected! Reach the exit!";
     }
 }
 
@@ -113,7 +139,7 @@ async function refreshState() {
         connectionElement.textContent = "CONNECTION ERROR";
         connectionElement.style.color = "#ff2d55";
         statusElement.textContent =
-            "Cannot connect to Flask. Check that web_app.py is running.";
+            "Cannot connect to Flask. Check web_app.py.";
         console.error(error);
     }
 }
@@ -126,7 +152,11 @@ async function movePlayer(dx, dy) {
     busy = true;
 
     try {
-        gameState = await apiRequest("/api/move", "POST", { dx, dy });
+        gameState = await apiRequest(
+            "/api/move",
+            "POST",
+            { dx, dy }
+        );
         drawMaze(gameState);
     } catch (error) {
         console.error("Movement failed:", error);
@@ -158,10 +188,54 @@ async function restartGame() {
     busy = true;
 
     try {
-        gameState = await apiRequest("/api/reset", "POST");
+        gameState = await apiRequest(
+            "/api/reset",
+            "POST",
+            { difficulty: gameState?.difficulty || "medium" }
+        );
         drawMaze(gameState);
     } catch (error) {
         console.error("Restart failed:", error);
+    } finally {
+        busy = false;
+    }
+}
+
+async function generateNewMaze() {
+    if (busy) return;
+
+    busy = true;
+
+    try {
+        gameState = await apiRequest(
+            "/api/new-maze",
+            "POST",
+            { difficulty: gameState?.difficulty || "medium" }
+        );
+        drawMaze(gameState);
+    } catch (error) {
+        console.error("New maze failed:", error);
+        statusElement.textContent =
+            "Could not generate a new maze. Please try again.";
+    } finally {
+        busy = false;
+    }
+}
+
+async function changeDifficulty(level) {
+    if (busy) return;
+
+    busy = true;
+
+    try {
+        gameState = await apiRequest(
+            "/api/reset",
+            "POST",
+            { difficulty: level }
+        );
+        drawMaze(gameState);
+    } catch (error) {
+        console.error("Difficulty change failed:", error);
     } finally {
         busy = false;
     }
@@ -181,19 +255,28 @@ document.addEventListener("keydown", event => {
         d: [1, 0]
     };
 
-    if (key === "r") {
+    if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(key)) {
         event.preventDefault();
+    }
+
+    if (key === "r") {
         restartGame();
         return;
     }
 
     if (directions[key]) {
-        event.preventDefault();
         movePlayer(...directions[key]);
     }
 });
 
 restartButton.addEventListener("click", restartGame);
+newMazeButton.addEventListener("click", generateNewMaze);
+
+difficultyButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        changeDifficulty(button.dataset.level);
+    });
+});
 
 refreshState();
 setInterval(updateHunter, 250);

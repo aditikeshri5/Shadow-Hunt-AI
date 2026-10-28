@@ -1,4 +1,8 @@
 
+/* ==============================
+   GLOBAL RESET
+============================== */
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -18,6 +22,10 @@ body {
     margin: auto;
     text-align: center;
 }
+
+/* ==============================
+   HEADER
+============================== */
 
 .eyebrow {
     color: #00e6ff;
@@ -43,6 +51,10 @@ h1 span {
     margin-bottom: 30px;
     line-height: 1.6;
 }
+
+/* ==============================
+   GAME PANEL
+============================== */
 
 .game-panel {
     background: #0a1022;
@@ -73,6 +85,135 @@ h1 span {
     font-weight: bold;
 }
 
+/* ==============================
+   DIFFICULTY SELECTION
+============================== */
+
+.difficulty-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 8px 0 14px;
+    padding: 14px 10px;
+    background: #070d1a;
+    border: 1px solid #1a2940;
+    border-radius: 10px;
+}
+
+.difficulty-controls > span {
+    color: #a8bdcf;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    margin-right: 5px;
+}
+
+/* Shared button styling */
+
+button {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    border-radius: 7px;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
+}
+
+button:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 3px;
+}
+
+/* Difficulty buttons */
+
+.difficulty-btn {
+    padding: 10px 17px;
+    border: 1px solid #29445c;
+    background: #0c1729;
+    color: #a8bdcf;
+}
+
+.difficulty-btn:hover {
+    border-color: #00e6ff;
+    color: #00e6ff;
+    background: #102236;
+}
+
+.difficulty-btn.active {
+    background: #00e6ff;
+    border-color: #00e6ff;
+    color: #050814;
+    box-shadow: 0 0 14px #00e6ff55;
+}
+
+/* Different colours for the difficulty levels */
+
+.difficulty-btn[data-level="easy"].active {
+    background: #37ffa0;
+    border-color: #37ffa0;
+    box-shadow: 0 0 14px #37ffa055;
+}
+
+.difficulty-btn[data-level="medium"].active {
+    background: #00e6ff;
+    border-color: #00e6ff;
+    box-shadow: 0 0 14px #00e6ff55;
+}
+
+.difficulty-btn[data-level="hard"].active {
+    background: #ff2d55;
+    border-color: #ff2d55;
+    color: #ffffff;
+    box-shadow: 0 0 14px #ff2d5555;
+}
+
+/* ==============================
+   LEVEL AND HUNTER INFORMATION
+============================== */
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    background: #070d1a;
+    border: 1px solid #1a2940;
+    border-radius: 8px;
+    color: #a8bdcf;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.game-info strong {
+    color: #00e6ff;
+}
+
+#difficultyLabel {
+    color: #37ffa0;
+}
+
+#hunterCount {
+    color: #ff2d55;
+}
+
+/* ==============================
+   MAZE GRID
+============================== */
+
 #maze {
     display: grid;
     grid-template-columns: repeat(21, minmax(0, 1fr));
@@ -81,6 +222,7 @@ h1 span {
     margin: 0 auto;
     border: 2px solid #00e6ff55;
     background: #090f1f;
+    box-shadow: 0 0 18px #00e6ff0d;
 }
 
 .cell {
@@ -89,7 +231,9 @@ h1 span {
     justify-content: center;
     align-items: center;
     min-width: 0;
+    overflow: hidden;
     font-size: clamp(8px, 2vw, 19px);
+    user-select: none;
 }
 
 .wall {
@@ -104,30 +248,39 @@ h1 span {
 .player {
     color: #00e6ff;
     text-shadow: 0 0 10px #00e6ff;
+    font-weight: bold;
 }
 
 .hunter {
     color: #ff2d55;
     text-shadow: 0 0 10px #ff2d55;
+    font-weight: bold;
 }
 
 .crystal {
     color: #ffcd37;
     text-shadow: 0 0 10px #ffcd37;
+    font-weight: bold;
 }
 
 .exit {
     color: #37ffa0;
     text-shadow: 0 0 10px #37ffa0;
+    font-weight: bold;
 }
 
 .path {
     background: #14213b;
 }
 
+/* ==============================
+   GAME STATISTICS
+============================== */
+
 .stats {
     display: flex;
     justify-content: center;
+    align-items: center;
     flex-wrap: wrap;
     gap: 15px 28px;
     margin-top: 22px;
@@ -139,45 +292,177 @@ h1 span {
 }
 
 #status {
+    width: 100%;
     color: #a8bdcf;
+    line-height: 1.6;
+    margin-top: 2px;
 }
+
+/* ==============================
+   GAME INSTRUCTIONS
+============================== */
 
 .instructions {
     margin: 22px 0 15px;
     color: #a8bdcf;
     font-size: 14px;
+    line-height: 1.6;
 }
 
-button {
+/* ==============================
+   ACTION BUTTONS
+============================== */
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 18px 0;
+}
+
+.action-buttons button {
+    min-width: 160px;
+    padding: 13px 22px;
+    border: 1px solid #00e6ff;
     background: #00e6ff;
     color: #050814;
-    border: none;
-    border-radius: 7px;
-    padding: 12px 22px;
-    font-weight: bold;
-    cursor: pointer;
 }
 
-button:hover {
+.action-buttons button:hover {
     background: #8af5ff;
+    border-color: #8af5ff;
     box-shadow: 0 0 18px #00e6ff55;
 }
 
-@media (max-width: 500px) {
+/* New Maze button */
+
+#newMaze {
+    background: transparent;
+    color: #00e6ff;
+    border-color: #00e6ff;
+}
+
+#newMaze:hover {
+    background: #00e6ff;
+    color: #050814;
+}
+
+/* Restart button */
+
+#restart {
+    background: #101d32;
+    color: #00e6ff;
+    border-color: #29445c;
+}
+
+#restart:hover {
+    background: #17314a;
+    border-color: #00e6ff;
+}
+
+/* ==============================
+   RESPONSIVE DESIGN
+============================== */
+
+@media (max-width: 600px) {
     body {
         padding: 20px 8px;
     }
 
+    .container {
+        width: 100%;
+    }
+
+    .eyebrow {
+        font-size: 10px;
+        letter-spacing: 2.5px;
+    }
+
+    h1 {
+        letter-spacing: 1px;
+    }
+
+    .subtitle {
+        font-size: 13px;
+        margin-bottom: 22px;
+    }
+
     .game-panel {
-        padding: 10px 6px;
+        padding: 12px 7px;
+        border-radius: 12px;
     }
 
     .game-heading {
         justify-content: center;
+        margin-bottom: 15px;
+    }
+
+    .game-heading h2 {
+        font-size: 12px;
+    }
+
+    .difficulty-controls {
+        gap: 7px;
+        padding: 12px 5px;
+    }
+
+    .difficulty-controls > span {
+        width: 100%;
+        margin: 0 0 3px;
+    }
+
+    .difficulty-btn {
+        padding: 9px 13px;
+        font-size: 11px;
+    }
+
+    .game-info {
+        justify-content: center;
+        gap: 8px 18px;
+        padding: 10px 5px;
+        font-size: 10px;
+    }
+
+    #maze {
+        width: 100%;
+    }
+
+    .cell {
+        font-size: clamp(7px, 2.5vw, 15px);
     }
 
     .stats {
         gap: 12px;
         font-size: 11px;
+        margin-top: 16px;
+    }
+
+    .instructions {
+        font-size: 12px;
+        margin-top: 17px;
+    }
+
+    .action-buttons {
+        gap: 8px;
+    }
+
+    .action-buttons button {
+        flex: 1;
+        min-width: 0;
+        padding: 12px 8px;
+        font-size: 11px;
+    }
+}
+
+/* Reduce animation for users who prefer less motion */
+
+@media (prefers-reduced-motion: reduce) {
+    button {
+        transition: none;
+    }
+
+    button:hover {
+        transform: none;
     }
 }
