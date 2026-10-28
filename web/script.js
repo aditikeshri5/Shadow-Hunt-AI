@@ -196,4 +196,4 @@ document.addEventListener("keydown", event => {
 restartButton.addEventListener("click", restartGame);
 
 refreshState();
-setInterval(updateHunter, 120);
+setInterval(updateHunter, 250);
